@@ -24,7 +24,7 @@ RUN mkdir -p video2x \
 
 # NOTE(jkoelker) build the real version
 COPY . /video2x/
-RUN pip wheel -w /wheels wheel .
+RUN pip wheel -w /wheels .
 
 # stage 2: install wheels into the final image
 FROM docker.io/nvidia/vulkan:1.3-470
