@@ -7,7 +7,7 @@
 FROM docker.io/nvidia/vulkan:1.3-470 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 
-COPY . /video2x
+COPY ./pyproject.toml ./pdm.lock ./README.md /video2x/
 WORKDIR /video2x
 RUN gpg --keyserver=keyserver.ubuntu.com --receive-keys A4B469963BF863CC \
     && gpg --export A4B469963BF863CC > /etc/apt/trusted.gpg.d/cuda.gpg
@@ -15,8 +15,16 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3.8 python3-pip python3-opencv python3-pil \
         python3.8-dev libvulkan-dev glslang-dev glslang-tools \
-        build-essential swig \
-    && pip wheel -w /wheels wheel pdm-pep517 .
+        build-essential swig
+# NOTE(jkoelker) install a stub version to get the dep wheels built
+RUN mkdir -p video2x \
+    && echo "__version__ = '0.0.0'" > video2x/__init__.py \
+    && pip wheel -w /wheels wheel pdm-pep517 . \
+    && rm -rf video2x
+
+# NOTE(jkoelker) build the real version
+COPY . /video2x/
+RUN pip wheel -w /wheels wheel .
 
 # stage 2: install wheels into the final image
 FROM docker.io/nvidia/vulkan:1.3-470
