@@ -135,16 +135,19 @@ class Upscaler:
         """
         width, height = image.size
 
-        for task in self._get_scaling_tasks(
+        GPUS = 2
+
+        for task_id, task in enumerate(self._get_scaling_tasks(
             width, height, output_width, output_height, algorithm
-        ):
+        )):
 
             # select a processor object with the required settings
             # create a new object if none are available
             processor_object = self.processor_objects.get((algorithm, task))
             if processor_object is None:
+                gpu_id = task_id % GPUS
                 processor_object = self.ALGORITHM_CLASSES[algorithm](
-                    noise=noise, scale=task
+                    gpuid=gpu_id, noise=noise, scale=task
                 )
                 self.processor_objects[(algorithm, task)] = processor_object
 
