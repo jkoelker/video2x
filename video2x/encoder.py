@@ -91,7 +91,7 @@ class VideoEncoder:
                     scodec="copy",
                     pix_fmt="yuv420p",
                     crf=17,
-                    preset="veryslow",
+                    preset="slow",
                     # acodec="libfdk_aac",
                     # cutoff=20000,
                     r=frame_rate,
