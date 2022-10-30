@@ -87,7 +87,7 @@ class VideoEncoder:
                     frames,
                     *[s for s in additional_streams if s is not None],
                     str(output_path),
-                    vcodec="hevc_nvenc",
+                    vcodec="h264_nvenc",
                     scodec="copy",
                     pix_fmt="yuv420p",
                     crf=17,
